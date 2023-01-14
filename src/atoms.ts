@@ -1,20 +1,28 @@
 import { atom, selector } from "recoil";
 
-interface IDataState {
-  [key: string]: string[];
+export interface IData {
+  id: number;
+  text: string;
+}
+
+export interface IDataState {
+  [key: string]: IData[];
 }
 
 export const dataState = atom<IDataState>({
   key: "data",
   default: {
-    TO_DO: ["a", "b", "c"],
-    DOING: ["d", "e"],
-    DONE: ["f"],
+    TO_DO: [],
+    DOING: [],
+    DONE: [],
   },
 });
 
 export const dataSelector = selector({
   key: "dataSelector",
-  get: ({ get }) => {},
-  set: ({ set }) => {},
+  get: (props) => {
+    const data = props.get(dataState);
+    console.log("get", props);
+    return data;
+  },
 });

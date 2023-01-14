@@ -7,7 +7,7 @@ import { darkTheme } from "./theme";
 const GlobalStyle = createGlobalStyle`
   body {
     background-color:${(props) => props.theme.backgroundColor} ;
-
+    overflow: hidden;
   }
 `;
 
