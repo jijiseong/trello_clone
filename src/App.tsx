@@ -1,7 +1,7 @@
 import { DropResult, DragDropContext } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { dataState, IData } from "./atoms";
+import { dataState } from "./atoms";
 import Board from "./components/Board";
 
 const Cotainer = styled.div`
@@ -31,25 +31,30 @@ const Title = styled.h1`
 function App() {
   const [data, setData] = useRecoilState(dataState);
 
+  // Drag Event on `<Card> and <Boards>`
   const onDragEnd = (info: DropResult) => {
-    /**
-     * move data
-     * [a, b, c] => [a, b]
-     * [d, e, f] => [d, e, f, c]
-     */
     const { draggableId, source, destination } = info;
     if (!destination) return;
     setData((allBoards) => {
+      // src === dst
+      if (source.droppableId === destination.droppableId) {
+        return allBoards;
+      }
+
+      // Deep copy
       const srcBoard = [...allBoards[source.droppableId]];
       const dstBoard = [...allBoards[destination.droppableId]];
 
+      // Find dragged item
       const srcItem = srcBoard.find((value) => value.id === +draggableId);
       if (srcItem === undefined) {
         return allBoards;
       }
+      console.log("srcItem :", srcItem);
 
-      srcBoard.splice(source.index, 1);
-      dstBoard.splice(destination.index, 0, srcItem);
+      // Modify source board and destination board, not all Board
+      srcBoard.splice(source.index, 1); // delete
+      dstBoard.splice(destination.index, 0, srcItem); // add
 
       return {
         ...allBoards,

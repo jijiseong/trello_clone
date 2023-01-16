@@ -1,10 +1,8 @@
-import { log } from "console";
-import React, { useRef } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { dataState, IData, IDataState } from "../atoms";
+import { dataState, IData } from "../atoms";
 import DragabbleCard from "./DragabbleCard";
 
 interface AreaProps {
@@ -21,7 +19,7 @@ const Container = styled.div`
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 150px;
-  width: 200px;
+  width: 300px;
   display: flex;
   flex-direction: column;
 `;
@@ -34,12 +32,27 @@ const Title = styled.div`
 `;
 
 const Area = styled.div<AreaProps>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: ${(props) =>
     props.isDragginOver ? props.theme.accentColor : props.theme.boardColor};
   flex-grow: 1;
   border-radius: 5px;
   transition: background-color 0.3s;
   padding: 10px;
+`;
+
+const BoardHeader = styled.header`
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AddButton = styled.button`
+  margin-left: auto;
 `;
 
 interface IForm {
@@ -63,7 +76,10 @@ export default function Board({ data, boardId }: BoardProps) {
   };
   return (
     <Container>
-      <Title>{boardId}</Title>
+      <BoardHeader>
+        <Title>{boardId}</Title>
+        <AddButton> +</AddButton>
+      </BoardHeader>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <input
           {...register("inputData", { required: true })}

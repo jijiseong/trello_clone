@@ -3,14 +3,16 @@ import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { IData } from "../atoms";
 
-const Card = styled.div<{ isDragging: boolean }>`
-  padding: 10px;
+const Card = styled.input<{ isDragging: boolean }>`
   border-radius: 5px;
+  border: 0;
   background-color: ${(props) =>
     props.isDragging ? props.theme.boardColor : props.theme.cardColor};
   margin-bottom: 5px;
   box-shadow: ${(props) =>
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.5)" : null};
+  width: 200px;
+  padding: 010px;
 `;
 
 interface IDragabbleCardProps {
@@ -28,9 +30,8 @@ function DragabbleCard({ data, idx }: IDragabbleCardProps) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-        >
-          {data.text}
-        </Card>
+          value={data.text}
+        ></Card>
       )}
     </Draggable>
   );
