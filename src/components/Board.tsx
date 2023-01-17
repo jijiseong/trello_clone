@@ -1,8 +1,8 @@
+import React from "react";
 import { Droppable } from "react-beautiful-dnd";
-import { useForm } from "react-hook-form";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { dataState, IData } from "../atoms";
+import { allBoardState } from "../atoms";
 import DragabbleCard from "./DragabbleCard";
 
 interface AreaProps {
@@ -11,7 +11,6 @@ interface AreaProps {
 }
 
 interface BoardProps {
-  data: IData[];
   boardId: string;
 }
 
@@ -19,14 +18,19 @@ const Container = styled.div`
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 150px;
-  width: 300px;
+  min-width: 120px;
+  max-height: 400px;
+
+  width: 14vw;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
 `;
 
 const Title = styled.div`
   text-align: center;
-  font-weight: 600;
+  font-size: 2em;
+  font-weight: 300;
   margin-top: 10px;
   margin-bottom: 10px;
 `;
@@ -34,10 +38,10 @@ const Title = styled.div`
 const Area = styled.div<AreaProps>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background-color: ${(props) =>
-    props.isDragginOver ? props.theme.accentColor : props.theme.boardColor};
+    props.isDragginOver ? "rgba(0,0,0,0.15)" : props.theme.boardColor};
   flex-grow: 1;
   border-radius: 5px;
   transition: background-color 0.3s;
@@ -52,41 +56,49 @@ const BoardHeader = styled.header`
 `;
 
 const AddButton = styled.button`
-  margin-left: auto;
+  position: absolute;
+  right: 20px;
+  border: 0;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: inherit;
+  font-size: 20px;
+
+  :hover {
+    background-color: ${(props) => props.theme.accentColor};
+    transition: 0.05s ease-in;
+    cursor: pointer;
+  }
+  :active {
+    background: var(--button-hover-bg-color);
+  }
 `;
 
-interface IForm {
-  inputData: string;
-}
+function Board({ boardId }: BoardProps) {
+  console.log("[Board]", boardId, "rendered");
+  const [allBoards, setAllBoards] = useRecoilState(allBoardState);
+  const board = allBoards[boardId];
 
-const Form = styled.form``;
+  const addData = () => {
+    setAllBoards((oldBoards) => {
+      const newData = { id: Date.now(), text: "" };
+      const copyBoard = [...oldBoards[boardId]];
+      copyBoard.push(newData);
 
-export default function Board({ data, boardId }: BoardProps) {
-  const setData = useSetRecoilState(dataState);
-  const { register, setValue, handleSubmit } = useForm<IForm>();
-
-  const onSubmit = ({ inputData }: IForm) => {
-    const newData: IData = { text: inputData, id: Date.now() };
-    setData((oldData) => {
-      const copyData = [...oldData[boardId]];
-      copyData.push(newData);
-      return { ...oldData, [boardId]: copyData };
+      return {
+        ...oldBoards,
+        [boardId]: copyBoard,
+      };
     });
-    setValue("inputData", "");
   };
+
   return (
     <Container>
       <BoardHeader>
         <Title>{boardId}</Title>
-        <AddButton> +</AddButton>
+        <AddButton onClick={addData}>+</AddButton>
       </BoardHeader>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register("inputData", { required: true })}
-          type="text"
-          placeholder={`Add task ${boardId}`}
-        />
-      </Form>
 
       <Droppable droppableId={boardId}>
         {(provided, snapshot) => (
@@ -96,9 +108,8 @@ export default function Board({ data, boardId }: BoardProps) {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {data.map((d, idx) => (
-              // key , draggableid are must be same
-              <DragabbleCard key={d.id} data={d} idx={idx} />
+            {board.map((d, idx) => (
+              <DragabbleCard key={d.id} data={d} idx={idx} boardId={boardId} />
             ))}
             {provided.placeholder}
           </Area>
@@ -107,3 +118,5 @@ export default function Board({ data, boardId }: BoardProps) {
     </Container>
   );
 }
+
+export default React.memo(Board);

@@ -1,24 +1,17 @@
 import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
 import App from "./App";
-import { darkTheme } from "./theme";
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color:${(props) => props.theme.backgroundColor} ;
-    overflow: hidden;
-  }
-`;
+import Modal from "react-modal";
+import "./app.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+Modal.setAppElement("#root");
+
 root.render(
   <RecoilRoot>
-    <ThemeProvider theme={darkTheme}>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <App />
   </RecoilRoot>
 );

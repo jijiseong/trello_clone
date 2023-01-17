@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
 export interface IData {
   id: number;
@@ -9,20 +9,26 @@ export interface IDataState {
   [key: string]: IData[];
 }
 
-export const dataState = atom<IDataState>({
-  key: "data",
-  default: {
-    TO_DO: [],
-    DOING: [],
-    DONE: [],
-  },
+interface IAllBoardState {
+  [key: string]: IData[];
+}
+
+export const boardsId = atom<string[]>({
+  key: "boardsId",
+  default: ["toDo", "doing", "done"],
 });
 
-export const dataSelector = selector({
-  key: "dataSelector",
-  get: (props) => {
-    const data = props.get(dataState);
-    console.log("get", props);
-    return data;
-  },
+export const allBoardState = atom<IAllBoardState>({
+  key: "boardList",
+  default: {},
+});
+
+export const boardModalState = atom<boolean>({
+  key: "boardModalState",
+  default: false,
+});
+
+export const isDarkState = atom({
+  key: "isDark",
+  default: true,
 });
