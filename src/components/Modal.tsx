@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Modal from "react-modal";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { allBoardState, boardModalState } from "../atoms";
+import { allBoardState, boardIdListState, boardModalState } from "../atoms";
 
 const customStyles = {
   content: {
@@ -29,6 +29,7 @@ export default function BoardModal() {
   const [modalIsOpen, setIsOpen] = useRecoilState(boardModalState);
   const { register, handleSubmit, setValue, setFocus } = useForm<IForm>();
   const setAllBoards = useSetRecoilState(allBoardState);
+  const setBoardIdList = useSetRecoilState(boardIdListState);
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -43,8 +44,14 @@ export default function BoardModal() {
     setAllBoards((oldBoards) => {
       const copyBoards = { ...oldBoards };
       copyBoards[data.boardName] = [];
-
       return copyBoards;
+    });
+
+    setBoardIdList((old) => {
+      const copy = [...old];
+
+      copy.push(data.boardName);
+      return copy;
     });
 
     closeModal();

@@ -11,9 +11,9 @@ export const lightTheme: DefaultTheme = {
 
 export const darkTheme: DefaultTheme = {
   backgroundColor: "#404258",
-  cardColor: "#474E68",
+  cardColor: "rgba(44, 44, 66)",
   boardColor: "#50577A",
   accentColor: "#6B728E",
-  accentColor2: "rgba(44, 44, 44)",
+  accentColor2: "rgba(55, 55, 70)",
   textColor: "white",
 };

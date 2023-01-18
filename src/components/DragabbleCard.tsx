@@ -11,12 +11,12 @@ const Card = styled.div<{ isDragging: boolean }>`
   border-radius: 5px;
   border: 0;
   margin-bottom: 5px;
-  width: 10vw;
-  height: 1vw;
+  width: 90%;
+  height: 5%;
   padding: 10px;
   display: flex;
   align-items: center;
-  font-size: 1.5em;
+  font-size: 20px;
 
   background-color: ${(props) =>
     props.isDragging ? props.theme.accentColor2 : props.theme.cardColor};
@@ -27,6 +27,8 @@ const Card = styled.div<{ isDragging: boolean }>`
 `;
 
 const CardInput = styled.input`
+  font-size: 20px;
+  padding: 0;
   color: ${(props) => props.theme.textColor};
   background-color: inherit;
   width: 100%;
@@ -72,7 +74,9 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
       if (srcItemIdx === undefined) {
         return oldBoards;
       }
+
       copyBoard[srcItemIdx] = newItem;
+
       return {
         ...oldBoards,
         [boardId]: copyBoard,
@@ -91,28 +95,30 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
 
   return (
     <Draggable draggableId={data.id + ""} index={idx}>
-      {(provided, snapshot) => (
-        <Card
-          isDragging={snapshot.isDragging}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onDoubleClick={onDoubleClick}
-        >
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <CardInput
-              {...register("inputData")}
-              placeholder="입력하세요!"
-              hidden={isHidden}
-              defaultValue={data.text}
-              onBlur={onBlur}
-              spellCheck={false}
-            />
-          </form>
+      {(provided, snapshot) => {
+        return (
+          <Card
+            isDragging={snapshot.isDragging}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            onDoubleClick={onDoubleClick}
+          >
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <CardInput
+                {...register("inputData")}
+                placeholder="입력하세요!"
+                hidden={isHidden}
+                defaultValue={data.text}
+                onBlur={onBlur}
+                spellCheck={false}
+              />
+            </form>
 
-          <span hidden={!isHidden}>{data.text}</span>
-        </Card>
-      )}
+            <span hidden={!isHidden}>{data.text}</span>
+          </Card>
+        );
+      }}
     </Draggable>
   );
 }

@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import App from "./App";
 import Modal from "react-modal";
-import "./app.css";
+import "./font.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

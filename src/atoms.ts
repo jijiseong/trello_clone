@@ -5,17 +5,13 @@ export interface IData {
   text: string;
 }
 
-export interface IDataState {
-  [key: string]: IData[];
-}
-
 interface IAllBoardState {
-  [key: string]: IData[];
+  [boardId: string]: IData[];
 }
 
-export const boardsId = atom<string[]>({
-  key: "boardsId",
-  default: ["toDo", "doing", "done"],
+export const boardIdListState = atom<string[]>({
+  key: "boardIdList",
+  default: [],
 });
 
 export const allBoardState = atom<IAllBoardState>({
@@ -30,5 +26,10 @@ export const boardModalState = atom<boolean>({
 
 export const isDarkState = atom({
   key: "isDark",
-  default: true,
+  default: false,
+});
+
+export const isCardDragState = atom({
+  key: "isCardDragging",
+  default: false,
 });
