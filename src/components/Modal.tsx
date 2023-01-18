@@ -48,10 +48,14 @@ export default function BoardModal() {
     });
 
     setBoardIdList((old) => {
-      const copy = [...old];
-
-      copy.push(data.boardName);
-      return copy;
+      if (old.includes(data.boardName)) {
+        alert("이미 존재하는 보드입니다!!");
+        return old;
+      } else {
+        const copy = [...old];
+        copy.push(data.boardName);
+        return copy;
+      }
     });
 
     closeModal();

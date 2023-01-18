@@ -13,7 +13,6 @@ const Container = styled.div`
 
 const DropArea = styled.div`
   display: flex;
-  gap: 10px;
   padding-left: 30px;
   padding-right: 30px;
   justify-content: center;
@@ -23,64 +22,61 @@ const DropArea = styled.div`
   border-radius: 30px;
 
   background-color: ${(props) => props.theme.accentColor};
+  transition: background-color 0.3s;
 `;
 
 function BoardList() {
   const [allBoards, setAllBoards] = useRecoilState(allBoardState);
   const [boardIdList, setBoardIdList] = useRecoilState(boardIdListState);
-
   const onDragEnd = (info: DropResult) => {
-    const { draggableId, source, destination, type } = info;
+    const { source, destination, type } = info;
     if (!destination) return;
     switch (type) {
       case "card":
-        setAllBoards((oldBoards) => {
-          // Deep copy
-          const srcBoard = [...oldBoards[source.droppableId]];
-          const dstBoard = [...oldBoards[destination.droppableId]];
-
-          // Find dragged item
-          const srcItem = srcBoard.find((value) => value.id === +draggableId);
-          if (srcItem === undefined) {
-            return allBoards;
-          }
-
-          // Modify source board and destination board, not all Board
-          if (source.droppableId === destination.droppableId) {
-            srcBoard.splice(source.index, 1); // delete
+        if (
+          // 변화가 없는 경우
+          source.droppableId === destination.droppableId &&
+          source.index === destination.index
+        ) {
+          break;
+        } else if (source.droppableId === destination.droppableId) {
+          setAllBoards((oldBoards) => {
+            // Deep copy
+            const srcBoard = [...oldBoards[source.droppableId]];
+            const srcItem = srcBoard.splice(source.index, 1)[0]; // delete
             srcBoard.splice(destination.index, 0, srcItem); // add
             return {
               ...allBoards,
               [source.droppableId]: srcBoard,
             };
-          } else {
-            srcBoard.splice(source.index, 1); // delete
+          });
+        } else if (source.droppableId !== destination.droppableId) {
+          setAllBoards((oldBoards) => {
+            const srcBoard = [...oldBoards[source.droppableId]];
+            const dstBoard = [...oldBoards[destination.droppableId]];
+            const srcItem = srcBoard.splice(source.index, 1)[0]; // delete
+            if (srcItem === undefined) {
+              return oldBoards; // 무슨 경우인지 모르겠음 ㅡㅡ
+            }
             dstBoard.splice(destination.index, 0, srcItem); // add
-
             return {
               ...allBoards,
               [source.droppableId]: srcBoard,
               [destination.droppableId]: dstBoard,
             };
-          }
-        });
+          });
+        }
         break;
       case "board":
-        console.log(info);
         setBoardIdList((old) => {
           const copy = [...old];
-          console.log(copy);
-
-          copy.splice(source.index, 1);
-          copy.splice(destination.index, 0, draggableId);
+          const item = copy.splice(source.index, 1)[0];
+          copy.splice(destination.index, 0, item);
           return copy;
         });
         break;
     }
   };
-
-  console.log("allBoards:", allBoards);
-  console.log("boardIdList:", boardIdList);
 
   return (
     <Container>
@@ -88,10 +84,12 @@ function BoardList() {
         <Droppable droppableId="boards" type="board" direction="horizontal">
           {(provided) => (
             <DropArea ref={provided.innerRef} {...provided.droppableProps}>
-              {boardIdList.map((boardId) => (
+              {boardIdList.map((boardId, index) => (
                 <DragabbleBoard
                   key={boardId}
                   boardId={boardId}
+                  index={index}
+                  board={allBoards[boardId]}
                 ></DragabbleBoard>
               ))}
               {provided.placeholder}

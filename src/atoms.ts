@@ -28,8 +28,3 @@ export const isDarkState = atom({
   key: "isDark",
   default: false,
 });
-
-export const isCardDragState = atom({
-  key: "isCardDragging",
-  default: false,
-});
