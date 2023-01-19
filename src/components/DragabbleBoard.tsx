@@ -2,7 +2,7 @@ import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { allBoardState, IData } from "../atoms";
+import { allBoardState, boardIdListState, IData } from "../atoms";
 import DragabbleCard from "./DragabbleCard";
 
 interface DropAreaProps {
@@ -34,19 +34,16 @@ const BoardHeader = styled.header`
   padding: 20px;
   cursor: move;
 `;
-
 const Title = styled.div`
   font-size: 2em;
   font-weight: bold;
   color: ${(props) => props.theme.textColor};
 `;
-
 const Buttons = styled.div`
   position: absolute;
   right: 15px;
   display: flex;
 `;
-
 const Button = styled.button`
   margin-right: 5px;
   color: ${(props) => props.theme.textColor};
@@ -69,18 +66,17 @@ const Button = styled.button`
     background: var(--button-hover-bg-color);
   }
 `;
-
 const DropArea = styled.div<DropAreaProps>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   background-color: ${(props) =>
     props.isDraggingOver ? "rgba(0,0,0,0.15)" : props.theme.boardColor};
   flex-grow: 1;
   border-radius: 5px;
   transition: background-color 0.3s;
-  padding: 10px;
+  padding: 20px;
 `;
 const Body = styled.div`
   flex-direction: column;
@@ -105,13 +101,14 @@ const Body = styled.div`
 
 function DraggableBoard({ boardId, index, board }: BoardProps) {
   const setAllBoards = useSetRecoilState(allBoardState);
+  const setBoardIdList = useSetRecoilState(boardIdListState);
 
   if (!board) {
     return null;
   }
   console.log("[Board]", boardId, "rendered");
 
-  const addData = () => {
+  const addCard = () => {
     setAllBoards((oldBoards) => {
       const newData = { id: Date.now(), text: "" };
       const copyBoard = [...oldBoards[boardId]];
@@ -130,6 +127,10 @@ function DraggableBoard({ boardId, index, board }: BoardProps) {
       console.log(copy);
       return copy;
     });
+    setBoardIdList((oldIdList) => {
+      const filtered = oldIdList.filter((val) => val !== boardId);
+      return filtered;
+    });
   };
 
   return (
@@ -139,7 +140,7 @@ function DraggableBoard({ boardId, index, board }: BoardProps) {
           <BoardHeader {...provided.dragHandleProps}>
             <Title>{boardId}</Title>
             <Buttons>
-              <Button onClick={addData}>+</Button>
+              <Button onClick={addCard}>+</Button>
               <Button onClick={deleteBoard}>X</Button>
             </Buttons>
           </BoardHeader>

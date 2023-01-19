@@ -75,6 +75,7 @@ export default function BoardModal() {
           {...register("boardName", { required: "보드 이름을 입력해주세요." })}
           placeholder="보드 이름을 입력해주세요."
           spellCheck={false}
+          autoComplete="off"
         />
       </form>
     </Modal>

@@ -12,13 +12,13 @@ const Card = styled.div<{ isDragging: boolean }>`
   border-radius: 5px;
   border: 0;
   margin-bottom: 5px;
-  width: 90%;
-  height: 30px;
-  padding: 10px;
+  width: 100%;
+  height: 50px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   font-size: 20px;
-
+  padding: 10px;
   background-color: ${(props) =>
     props.isDragging ? props.theme.accentColor2 : props.theme.cardColor};
   box-shadow: ${(props) =>
@@ -87,8 +87,8 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
         { shouldFocus: true }
       );
     }
-    setIsHidden(true);
     updateBoard(inputData);
+    setIsHidden(true);
   };
 
   const onBlur = (event: FormEvent<HTMLInputElement>) => {
@@ -100,16 +100,17 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
         { shouldFocus: true }
       );
     }
-    setIsHidden(true);
     updateBoard(data);
+    setIsHidden(true);
   };
 
   // text 수정
   const updateBoard = (newValue: string) => {
     setAllBoards((oldBoards) => {
       const copyBoard = [...oldBoards[boardId]];
-      const newItem = { id: Date.now(), text: newValue };
       const srcItemIdx = copyBoard.findIndex((v) => v.id === data.id);
+      const newItem = { id: data.id, text: newValue };
+
       if (srcItemIdx === undefined) {
         return oldBoards;
       }
@@ -123,24 +124,22 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
 
   const onDoubleClick = () => {
     setIsHidden(false);
+    setFocus("inputData");
   };
 
-  const deleteItem = (id: number) => {
+  const deleteCard = (id: number) => {
     setAllBoards((oldBoards) => {
       const copyBoard = [...oldBoards[boardId]];
-      const findItem = copyBoard.findIndex((value) => value.id === id);
-      copyBoard.splice(findItem, 1);
+      const findItemIdx = copyBoard.findIndex((value) => value.id === id);
+      copyBoard.splice(findItemIdx, 1);
 
       return { ...oldBoards, [boardId]: copyBoard };
     });
   };
 
   useEffect(() => {
-    if (!isHidden) {
-      console.log("setFocus");
-      setFocus("inputData");
-    }
-  }, [isHidden, setFocus]);
+    setFocus("inputData");
+  }, [isHidden]);
 
   return (
     <Draggable draggableId={data.id + ""} index={idx} key={data.id}>
@@ -161,10 +160,12 @@ function DragabbleCard({ data, idx, boardId }: IDragabbleCardProps) {
                 defaultValue={data.text}
                 onBlur={onBlur}
                 spellCheck={false}
+                autoComplete="off"
               />
             </form>
             <span hidden={!isHidden}>{data.text}</span>
-            <DeleteButton onClick={() => deleteItem(data.id)}>x</DeleteButton>
+
+            <DeleteButton onClick={() => deleteCard(data.id)}>x</DeleteButton>
           </Card>
         );
       }}
