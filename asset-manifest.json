@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/trello_clone/static/css/main.9761cef8.css",
+    "main.js": "/trello_clone/static/js/main.350dbe5a.js",
+    "index.html": "/trello_clone/index.html",
+    "main.9761cef8.css.map": "/trello_clone/static/css/main.9761cef8.css.map",
+    "main.350dbe5a.js.map": "/trello_clone/static/js/main.350dbe5a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9761cef8.css",
+    "static/js/main.350dbe5a.js"
+  ]
+}
